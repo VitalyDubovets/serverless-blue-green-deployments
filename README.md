@@ -1,8 +1,11 @@
+# This is a copy of the original repository, created for personal use and your own improvements
+Original repository: <a href="https://github.com/davidgf/serverless-plugin-canary-deployments">Click</a>
+
 [![npm version](https://badge.fury.io/js/serverless-plugin-canary-deployments.svg)](https://badge.fury.io/js/serverless-plugin-canary-deployments)
 
-# Serverless Plugin Canary Deployments
+# Serverless Plugin Blue/Green Deployments
 
-A Serverless plugin to implement canary deployments of Lambda functions, making use of the [traffic shifting feature](https://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html) in combination with [AWS CodeDeploy](https://docs.aws.amazon.com/lambda/latest/dg/automating-updates-to-serverless-apps.html)
+A Serverless plugin to implement blue/green deployments of Lambda functions, making use of the [traffic shifting feature](https://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html) in combination with [AWS CodeDeploy](https://docs.aws.amazon.com/lambda/latest/dg/automating-updates-to-serverless-apps.html)
 
 ## Contents
 
@@ -15,7 +18,7 @@ A Serverless plugin to implement canary deployments of Lambda functions, making 
 
 ## <a name="installation"></a>Installation
 
-`npm i --save-dev serverless-plugin-canary-deployments`
+`npm i --save-dev serverless-plugin-blue-green-deployments`
 
 ## <a name="usage"></a>Usage
 
