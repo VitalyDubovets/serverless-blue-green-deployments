@@ -28,7 +28,7 @@
     "get-installed-path": "^4.0.8",
     "husky": "^3.0.1",
     "mocha": "^8.2.1",
-    "serverless": "^1.47.0",
+    "serverless": "^2.11.1",
     "standard": "*"
   },
   "peerDependencies": {
