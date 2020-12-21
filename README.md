@@ -25,7 +25,7 @@ A Serverless plugin to implement blue/green deployments of Lambda functions, mak
 To enable gradual deployments for Lambda functions, your `serverless.yml` should look like this:
 
 ```yaml
-service: canary-deployments
+service: blue-green-deployments
 provider:
   name: aws
   runtime: nodejs6.10
@@ -37,7 +37,7 @@ provider:
         - "*"
 
 plugins:
-  - serverless-plugin-canary-deployments
+  - serverless-blue-green-deployments
 
 functions:
   hello:
@@ -46,7 +46,7 @@ functions:
       - http: GET hello
     deploymentSettings:
       type: Linear10PercentEvery1Minute
-      alias: Live
+      alias: <your logical name of an alias>  # Your logical name will be look in cloudformation "<your logical name of an alias>Alias"
       preTrafficHook: preHook
       postTrafficHook: postHook
       alarms:
