@@ -1,37 +1,34 @@
 {
-  "name": "serverless-plugin-canary-deployments",
+  "name": "serverless-blue-green-deployments",
   "engines": {
     "node": ">=4.0"
   },
-  "version": "0.4.8",
-  "description": "A Serverless plugin to implement canary deployment of Lambda functions",
-  "main": "serverless-plugin-canary-deployments.js",
+  "version": "0.1.0",
+  "description": "A Serverless plugin to implement blue/green deployment of Lambda functions",
+  "main": "serverless-blue-green-deployments.js",
   "scripts": {
     "test": "npm run lint && NODE_ENV=test ./node_modules/mocha/bin/mocha $(find ./ -name '*.test.js' -not -path '.*/node_modules/*')",
     "watch": "NODE_ENV=test ./node_modules/mocha/bin/mocha -w $(find ./ -name '*.test.js' -not -path '*/node_modules/*')",
     "lint": "standard"
   },
-  "author": "David García <davidgf1987@gmail.com>",
-  "contributors": [
-    "Carlos Castellanos <me@carloscastellanosvera.com> (https://github.com/ccverak/)",
-    "Kartikeya Verma <kverma23@outlook.com> (https://github.com/kverma23/)"
-  ],
+  "author": "Vitaly Dubovets <dubovetsvitaliy@gmail.com>",
   "license": "ISC",
   "repository": {
-    "url": "https://github.com/davidgf/serverless-plugin-canary-deployments.git",
+    "url": "https://github.com/VitalyDubovets/serverless-blue-green-deployments.git",
     "type": "git"
   },
   "dependencies": {
     "flat": "^4.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
+    "np": "^7.0.0",
     "omit-empty": "^0.4.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "get-installed-path": "^4.0.8",
     "husky": "^3.0.1",
-    "mocha": "^5.2.0",
-    "serverless": "^1.47.0",
+    "mocha": "^8.2.1",
+    "serverless": "^2.16.0",
     "standard": "*"
   },
   "peerDependencies": {
