@@ -1,4 +1,4 @@
-# This project created for personal use is based on another repository
+# The project is based on another repository and was created for personal modifications and improvements
 Original repository: <a href="https://github.com/davidgf/serverless-plugin-canary-deployments">Click</a>
 
 [![npm version](https://badge.fury.io/js/serverless-blue-green-deployments.svg)](https://badge.fury.io/js/serverless-blue-green-deployments)
