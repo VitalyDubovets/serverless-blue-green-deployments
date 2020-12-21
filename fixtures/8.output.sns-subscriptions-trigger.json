@@ -192,7 +192,7 @@
         },
         "Protocol": "lambda",
         "Endpoint": {
-          "Ref": "BelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "FilterPolicy": {
           "eventType": ["HelloEvent"]
@@ -203,7 +203,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "BelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": {
@@ -290,7 +290,7 @@
         }
       }
     },
-    "BelloLambdaFunctionAliasLive": {
+    "LiveAlias": {
       "Type": "AWS::Lambda::Alias",
       "Properties": {
         "FunctionVersion": {

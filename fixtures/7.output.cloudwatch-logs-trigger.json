@@ -235,7 +235,7 @@
         "LogGroupName": "/aws/lambda/hello",
         "FilterPattern": "",
         "DestinationArn": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         }
       }
     },
@@ -243,7 +243,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": {
@@ -360,7 +360,7 @@
         }
       }
     },
-    "HelloLambdaFunctionAliasLive": {
+    "LiveAlias": {
       "Type": "AWS::Lambda::Alias",
       "Properties": {
         "FunctionVersion": {

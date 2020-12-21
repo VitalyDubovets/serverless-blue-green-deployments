@@ -359,7 +359,7 @@
         "Targets": [
           {
             "Arn": {
-              "Ref": "HelloLambdaFunctionAliasLive"
+              "Ref": "LiveAlias"
             },
             "Id": "helloSchedule"
           }
@@ -370,7 +370,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "events.amazonaws.com",
@@ -425,7 +425,7 @@
           "IntegrationHttpMethod": "POST",
           "Type": "AWS_PROXY",
           "Uri": {
-            "Ref": "HelloLambdaFunctionAliasLive"
+            "Ref": "LiveAlias"
           }
         },
         "MethodResponses": []
@@ -447,7 +447,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "apigateway.amazonaws.com",
@@ -494,7 +494,7 @@
         },
         "IntegrationType": "AWS_PROXY",
         "IntegrationUri": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         }
       }
     },
@@ -507,7 +507,7 @@
         "Name": "authorize",
         "AuthorizerType": "REQUEST",
         "AuthorizerUri": {
-          "Ref": "AuthorizeLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "IdentitySource": [
           "route.request.header.Auth"
@@ -522,7 +522,7 @@
       ],
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "apigateway.amazonaws.com"
@@ -538,7 +538,7 @@
         "Action": "lambda:InvokeFunction",
         "Principal": "apigateway.amazonaws.com",
         "FunctionName": {
-          "Ref": "AuthorizeLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         }
       }
     },
@@ -599,7 +599,7 @@
         "Subscription": [
           {
             "Endpoint": {
-              "Ref": "HelloLambdaFunctionAliasLive"
+              "Ref": "LiveAlias"
             },
             "Protocol": "lambda"
           }
@@ -610,7 +610,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "sns.amazonaws.com",
@@ -648,7 +648,7 @@
       "Type": "AWS::SNS::Subscription",
       "Properties": {
         "Endpoint": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Protocol": "lambda",
         "TopicArn": {
@@ -665,7 +665,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "sns.amazonaws.com",
@@ -705,7 +705,7 @@
           ]
         },
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "StartingPosition": "TRIM_HORIZON",
         "Enabled": "True"
@@ -721,7 +721,7 @@
             {
               "Lambda": {
                 "FunctionArn": {
-                  "Ref": "HelloLambdaFunctionAliasLive"
+                  "Ref": "LiveAlias"
                 }
               }
             }
@@ -733,7 +733,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "iot.amazonaws.com",
@@ -769,7 +769,7 @@
         "LogGroupName": "/aws/lambda/sls-wshop-dev-hello",
         "FilterPattern": "",
         "DestinationArn": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         }
       }
     },
@@ -777,7 +777,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": {
@@ -828,7 +828,7 @@
           ]
         },
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Enabled": "True"
       }
@@ -922,7 +922,7 @@
         }
       }
     },
-    "AuthorizeLambdaFunctionAliasLive": {
+    "LiveAlias": {
       "Type": "AWS::Lambda::Alias",
       "Properties": {
         "FunctionVersion": {
@@ -991,7 +991,7 @@
         }
       }
     },
-    "HelloLambdaFunctionAliasLive": {
+    "LiveAlias": {
       "Type": "AWS::Lambda::Alias",
       "Properties": {
         "FunctionVersion": {

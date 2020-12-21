@@ -190,7 +190,7 @@
           "IntegrationHttpMethod": "POST",
           "Type": "AWS_PROXY",
           "Uri": {
-            "Ref": "HelloLambdaFunctionAliasLive"
+            "Ref": "LiveAlias"
           }
         },
         "MethodResponses": []
@@ -212,7 +212,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "apigateway.amazonaws.com",
@@ -246,7 +246,7 @@
         "Subscription": [
           {
             "Endpoint": {
-              "Ref": "HelloLambdaFunctionAliasLive"
+              "Ref": "LiveAlias"
             },
             "Protocol": "lambda"
           }
@@ -257,7 +257,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "sns.amazonaws.com",
@@ -292,7 +292,7 @@
           ]
         },
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "StartingPosition": "TRIM_HORIZON",
         "Enabled": "True"
@@ -422,7 +422,7 @@
         }
       }
     },
-    "HelloLambdaFunctionAliasLive": {
+    "LiveAlias": {
       "Type": "AWS::Lambda::Alias",
       "Properties": {
         "FunctionVersion": {

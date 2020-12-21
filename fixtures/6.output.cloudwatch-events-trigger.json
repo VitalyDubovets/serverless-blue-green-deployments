@@ -235,7 +235,7 @@
         "Targets": [
           {
             "Arn": {
-              "Ref": "HelloLambdaFunctionAliasLive"
+              "Ref": "LiveAlias"
             },
             "Id": "testFunctionSchedule"
           }
@@ -246,7 +246,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Ref": "HelloLambdaFunctionAliasLive"
+          "Ref": "LiveAlias"
         },
         "Action": "lambda:InvokeFunction",
         "Principal": {
@@ -367,7 +367,7 @@
         }
       }
     },
-    "HelloLambdaFunctionAliasLive": {
+    "LiveAlias": {
       "Type": "AWS::Lambda::Alias",
       "Properties": {
         "FunctionVersion": {
