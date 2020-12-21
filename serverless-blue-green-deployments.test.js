@@ -3,7 +3,7 @@ const path = require('path')
 const chai = require('chai')
 const _ = require('lodash/fp')
 const { getInstalledPathSync } = require('get-installed-path')
-const ServerlessCanaryDeployments = require('./serverless-blue-green-deployments')
+const ServerlessBlueGreenDeployments = require('./serverless-blue-green-deployments')
 
 const serverlessPath = getInstalledPathSync('serverless', { local: true })
 const AwsProvider = require(`${serverlessPath}/lib/plugins/aws/provider/awsProvider`)
@@ -11,11 +11,11 @@ const Serverless = require(`${serverlessPath}/lib/Serverless`)
 const { expect } = chai
 const fixturesPath = path.resolve(__dirname, 'fixtures')
 
-describe('ServerlessCanaryDeployments', () => {
+describe('ServerlessBlueGreenDeployments', () => {
   const stage = 'dev'
   const options = { stage }
 
-  describe('addCanaryDeploymentResources', () => {
+  describe('addBlueGreenDeploymentResources', () => {
     const testCaseFiles = fs.readdirSync(fixturesPath)
     const getTestCaseName = _.pipe(_.split('.'), _.head)
     const testCaseFileType = _.pipe(_.split('.'), _.get('[1]'))
@@ -38,8 +38,8 @@ describe('ServerlessCanaryDeployments', () => {
         Object.assign(serverless.service, service)
         serverless.service.provider.compiledCloudFormationTemplate = input
         serverless.setProvider('aws', new AwsProvider(serverless, options))
-        const plugin = new ServerlessCanaryDeployments(serverless, options)
-        plugin.addCanaryDeploymentResources()
+        const plugin = new ServerlessBlueGreenDeployments(serverless, options)
+        plugin.addBlueGreenDeploymentResources()
         expect(serverless.service.provider.compiledCloudFormationTemplate).to.deep.equal(output)
       })
     })
