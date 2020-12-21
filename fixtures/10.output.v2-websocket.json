@@ -379,7 +379,20 @@
           "IntegrationHttpMethod": "POST",
           "Type": "AWS_PROXY",
           "Uri": {
-            "Ref": "LiveAlias"
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Ref": "LiveAlias"
+                },
+                "/invocations"
+              ]
+            ]
           }
         },
         "MethodResponses": []
@@ -448,9 +461,27 @@
         },
         "IntegrationType": "AWS_PROXY",
         "IntegrationUri": {
-          "Ref": "LiveAlias"
-        }}
-      },
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":apigateway:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":lambda:path/2015-03-31/functions/",
+              {
+                "Ref": "LiveAlias"
+              },
+              "/invocations"
+            ]
+          ]
+        }
+      }
+    },
     "HelloLambdaPermissionWebsockets": {
       "Type": "AWS::Lambda::Permission",
       "DependsOn": [
