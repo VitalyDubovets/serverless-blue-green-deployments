@@ -1070,6 +1070,25 @@
           ]
         ]
       }
+    },
+    "AuthorizerJWT": {
+      "Type": "AWS::ApiGatewayV2::Authorizer",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "AuthorizerType": "JWT",
+        "IdentitySource": [
+          "$request.header.Authorization"
+        ],
+        "JwtConfiguration": {
+          "Audience": [
+            "example"
+          ],
+          "Issuer": "https://cognito-idp.region.amazonaws.com/us-east"
+        },
+        "Name": "userJwtAuthorizer"
+      }
     }
   }
 }

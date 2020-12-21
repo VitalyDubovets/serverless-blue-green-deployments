@@ -151,12 +151,16 @@ class ServerlessBlueGreenDeployments {
       'AWS::Logs::SubscriptionFilter': CfGenerators.cloudWatchLogs.replaceCloudWatchLogsDestinationArnWithAlias,
       'AWS::IoT::TopicRule': CfGenerators.iot.replaceIotTopicRuleActionArnWithAlias
     }
-    const functionEvents = this.getEventsFor(functionName)
-    const functionEventsEntries = _.entries(functionEvents)
-    return functionEventsEntries.map(([logicalName, event]) => {
-      const evt = replaceAliasStrategy[event.Type](event, functionAlias, functionName)
-      return { [logicalName]: evt }
-    })
+    try {
+      const functionEvents = this.getEventsFor(functionName)
+      const functionEventsEntries = _.entries(functionEvents)
+      return functionEventsEntries.map(([logicalName, event]) => {
+        const evt = replaceAliasStrategy[event.Type](event, functionAlias, functionName)
+        return { [logicalName]: evt }
+      })
+    } catch (e) {
+      return []
+    }
   }
 
   getEventsFor (functionName) {
