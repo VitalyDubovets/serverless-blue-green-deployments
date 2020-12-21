@@ -42,11 +42,6 @@
     "gradual",
     "deployments"
   ],
-  "husky": {
-    "hooks": {
-      "pre-push": "npm test"
-    }
-  },
   "standard": {
     "globals": [
       "describe",
