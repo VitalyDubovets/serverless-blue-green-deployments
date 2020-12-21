@@ -39,6 +39,8 @@
     "lambda",
     "serverless",
     "canary",
+    "blue",
+    "green",
     "gradual",
     "deployments"
   ],
