@@ -1,7 +1,7 @@
-# This is a copy of the original repository, created for personal use and your own improvements
+# This project created for personal use is based on another repository
 Original repository: <a href="https://github.com/davidgf/serverless-plugin-canary-deployments">Click</a>
 
-[![npm version](https://badge.fury.io/js/serverless-plugin-canary-deployments.svg)](https://badge.fury.io/js/serverless-plugin-canary-deployments)
+[![npm version](https://badge.fury.io/js/serverless-blue-green-deployments.svg)](https://badge.fury.io/js/serverless-blue-green-deployments)
 
 # Serverless Plugin Blue/Green Deployments
 
@@ -126,4 +126,4 @@ For now, the plugin only works with Lambda functions invoked by
 
 ## <a name="license"></a>License
 
-ISC © [David García](https://github.com/davidgf)
+ISC © [Dubovets Vitaly](https://github.com/VitalyDubovets)
