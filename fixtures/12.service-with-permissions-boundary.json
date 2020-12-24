@@ -1,5 +1,5 @@
 {
-  "service": "canary-deployments-test",
+  "service": "blue-green-deployments-test",
   "custom": {
     "deploymentSettings": {
       "codeDeployRolePermissionsBoundary": "someExistingCodeDeployRolePermissionsBoundary"

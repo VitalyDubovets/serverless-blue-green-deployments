@@ -75,8 +75,16 @@ class ServerlessBlueGreenDeployments {
     const aliasTpl = this.buildFunctionAlias({ deploymentSettings, functionName, deploymentGroup })
     const functionAlias = this.getResourceLogicalName(aliasTpl)
     const lambdaPermissions = this.buildPermissionsForAlias({ functionName, functionAlias })
-    const eventsWithAlias = this.buildEventsForAlias({ functionName, functionAlias })
-
+    const eventsWithAlias = this.buildEventsForAlias(
+      { functionName, functionAlias, serverlessFnName }
+    )
+    Object.assign(
+      this.compiledTpl.Resources,
+      deploymentGrTpl,
+      aliasTpl,
+      ...lambdaPermissions,
+      ...eventsWithAlias
+    )
     return [deploymentGrTpl, aliasTpl, ...lambdaPermissions, ...eventsWithAlias]
   }
 
@@ -138,7 +146,7 @@ class ServerlessBlueGreenDeployments {
     })
   }
 
-  buildEventsForAlias ({ functionName, functionAlias }) {
+  buildEventsForAlias ({ functionName, functionAlias, serverlessFnName }) {
     const replaceAliasStrategy = {
       'AWS::Lambda::EventSourceMapping': CfGenerators.lambda.replaceEventMappingFunctionWithAlias,
       'AWS::ApiGateway::Method': CfGenerators.apiGateway.replaceMethodUriWithAlias,
@@ -149,13 +157,16 @@ class ServerlessBlueGreenDeployments {
       'AWS::S3::Bucket': CfGenerators.s3.replaceS3BucketFunctionWithAlias,
       'AWS::Events::Rule': CfGenerators.cloudWatchEvents.replaceCloudWatchEventRuleTargetWithAlias,
       'AWS::Logs::SubscriptionFilter': CfGenerators.cloudWatchLogs.replaceCloudWatchLogsDestinationArnWithAlias,
-      'AWS::IoT::TopicRule': CfGenerators.iot.replaceIotTopicRuleActionArnWithAlias
+      'AWS::IoT::TopicRule': CfGenerators.iot.replaceIotTopicRuleActionArnWithAlias,
+      'AWS::Cognito::UserPool': CfGenerators.cognitoUserPool.replaceCognitoUserPoolWithAlias
     }
     try {
-      const functionEvents = this.getEventsFor(functionName)
+      const functionEvents = this.getEventsFor(functionName, serverlessFnName)
       const functionEventsEntries = _.entries(functionEvents)
       return functionEventsEntries.map(([logicalName, event]) => {
-        const evt = replaceAliasStrategy[event.Type](event, functionAlias, functionName)
+        const evt = replaceAliasStrategy[event.Type](
+          event, functionAlias, functionName, this.service, serverlessFnName
+        )
         return { [logicalName]: evt }
       })
     } catch (e) {
@@ -163,9 +174,9 @@ class ServerlessBlueGreenDeployments {
     }
   }
 
-  getEventsFor (functionName) {
+  getEventsFor (functionName, serverlessFnName) {
     const apiGatewayMethods = this.getApiGatewayMethodsFor(functionName)
-    const apiGatewayV2Integration = this.getApiGatewayV2IntegrationFor(functionName)
+    const apiGatewayV2Integrations = this.getApiGatewayV2IntegrationFor(functionName)
     const apiGatewayV2Authorizers = this.getApiGatewayV2AuthorizersFor(functionName)
     const eventSourceMappings = this.getEventSourceMappingsFor(functionName)
     const snsTopics = this.getSnsTopicsFor(functionName)
@@ -174,10 +185,11 @@ class ServerlessBlueGreenDeployments {
     const cloudWatchEvents = this.getCloudWatchEventsFor(functionName)
     const cloudWatchLogs = this.getCloudWatchLogsFor(functionName)
     const iotTopicRules = this.getIotTopicRulesFor(functionName)
+    const cognitoUserPools = this.getCognitoUserPoolsFor(functionName, serverlessFnName)
     return Object.assign(
       {},
       apiGatewayMethods,
-      apiGatewayV2Integration,
+      apiGatewayV2Integrations,
       apiGatewayV2Authorizers,
       eventSourceMappings,
       snsTopics,
@@ -185,7 +197,8 @@ class ServerlessBlueGreenDeployments {
       cloudWatchEvents,
       cloudWatchLogs,
       snsSubscriptions,
-      iotTopicRules
+      iotTopicRules,
+      cognitoUserPools
     )
   }
 
@@ -204,14 +217,14 @@ class ServerlessBlueGreenDeployments {
   }
 
   getApiGatewayV2IntegrationFor (functionName) {
-    const isApiGMethod = _.matchesProperty('Type', 'AWS::ApiGatewayV2::Integration')
+    const isApiGatewayV2Integration = _.matchesProperty('Type', 'AWS::ApiGatewayV2::Integration')
     const isIntegrationForFunction = _.pipe(
       _.prop('Properties.IntegrationUri'),
       flattenObject,
       _.includes(functionName)
     )
     const getIntegrationsForFunction = _.pipe(
-      _.pickBy(isApiGMethod),
+      _.pickBy(isApiGatewayV2Integration),
       _.pickBy(isIntegrationForFunction)
     )
     return getIntegrationsForFunction(this.compiledTpl.Resources)
@@ -297,6 +310,24 @@ class ServerlessBlueGreenDeployments {
       _.pickBy(isLogSubscriptionForFn)
     )
     return getLogSubscriptionsForFunction(this.compiledTpl.Resources)
+  }
+
+  getCognitoUserPoolsFor (functionName, serverlessFnName) {
+    const cognitoTrigger = CfGenerators.cognitoUserPool.getTypeOfCognitoTrigger(
+      functionName, this.service, serverlessFnName
+    )
+    const pathToFun = `Properties.LambdaConfig.${cognitoTrigger}.Fn::GetAtt`
+    const isCognitoUserPool = _.matchesProperty('Type', 'AWS::Cognito::UserPool')
+    const isCognitoUserPoolForFn = _.pipe(
+      _.prop(pathToFun),
+      _.flatten,
+      _.includes(functionName)
+    )
+    const getCognitoUserPoolsForFunction = _.pipe(
+      _.pickBy(isCognitoUserPool),
+      _.pickBy(isCognitoUserPoolForFn)
+    )
+    return getCognitoUserPoolsForFunction(this.compiledTpl.Resources)
   }
 
   getS3EventsFor (functionName) {

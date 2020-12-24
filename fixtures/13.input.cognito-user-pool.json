@@ -11,18 +11,6 @@
         "LogGroupName": "/aws/lambda/canary-deployments-test-dev-hello"
       }
     },
-    "PreHookLogGroup": {
-      "Type": "AWS::Logs::LogGroup",
-      "Properties": {
-        "LogGroupName": "/aws/lambda/canary-deployments-test-dev-preHook"
-      }
-    },
-    "PostHookLogGroup": {
-      "Type": "AWS::Logs::LogGroup",
-      "Properties": {
-        "LogGroupName": "/aws/lambda/canary-deployments-test-dev-postHook"
-      }
-    },
     "IamRoleLambdaExecution": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -99,6 +87,23 @@
                   "Resource": [
                     "*"
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetRecords",
+                    "dynamodb:GetShardIterator",
+                    "dynamodb:DescribeStream",
+                    "dynamodb:ListStreams"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "StreamsTestTable",
+                        "StreamArn"
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -125,9 +130,9 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/canary-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
+          "S3Key": "serverless/blue-green-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
         },
-        "FunctionName": "canary-deployments-test-dev-hello",
+        "FunctionName": "blue-green-deployments-test-dev-hello",
         "Handler": "handler.hello",
         "MemorySize": 1024,
         "Role": {
@@ -154,17 +159,17 @@
         "CodeSha256": "sZvdDgxnAbKe1yaQga0XJPD82+o5jFWz+J3lR+q9UHU="
       }
     },
-    "PreHookLambdaFunction": {
+    "Hello2LambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/canary-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
+          "S3Key": "serverless/blue-green-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
         },
-        "FunctionName": "canary-deployments-test-dev-preHook",
-        "Handler": "hooks.pre",
+        "FunctionName": "canary-deployments-test-dev-hello",
+        "Handler": "handler.hello",
         "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
@@ -176,31 +181,31 @@
         "Timeout": 6
       },
       "DependsOn": [
-        "PreHookLogGroup",
+        "HelloLogGroup",
         "IamRoleLambdaExecution"
       ]
     },
-    "PreHookLambdaVersionIYyrXlfQM5jjU68REvnAzRxhgq9eoLqSsDjy0": {
+    "Hello2LambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "PreHookLambdaFunction"
+          "Ref": "Hello2LambdaFunction"
         },
         "CodeSha256": "sZvdDgxnAbKe1yaQga0XJPD82+o5jFWz+J3lR+q9UHU="
       }
     },
-    "PostHookLambdaFunction": {
+    "Hello3LambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/canary-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
+          "S3Key": "serverless/blue-green-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
         },
-        "FunctionName": "canary-deployments-test-dev-postHook",
-        "Handler": "hooks.post",
+        "FunctionName": "blue-green-deployments-test-dev-hello",
+        "Handler": "handler.hello",
         "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
@@ -212,188 +217,68 @@
         "Timeout": 6
       },
       "DependsOn": [
-        "PostHookLogGroup",
+        "HelloLogGroup",
         "IamRoleLambdaExecution"
       ]
     },
-    "PostHookLambdaVersiondh0VUUAh9BrmvORqx3vDEIcHxolKWKCO1YL45mVTbg": {
+    "Hello3LambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "PostHookLambdaFunction"
+          "Ref": "Hello3LambdaFunction"
         },
         "CodeSha256": "sZvdDgxnAbKe1yaQga0XJPD82+o5jFWz+J3lR+q9UHU="
       }
     },
-    "HelloLambdaEventsRuleSchedule1": {
-      "Type": "AWS::Events::Rule",
+    "CognitoUserPoolUsers": {
+      "Type": "AWS::Cognito::UserPool",
       "Properties": {
-        "ScheduleExpression": "rate(1 minute)",
-        "State": "ENABLED",
-        "Name": "test-scheduled-event",
-        "Targets": [
-          {
-            "Arn": {
-              "Ref": "LiveAlias"
-            },
-            "Id": "testFunctionSchedule"
-          }
-        ]
-      }
-    },
-    "HelloLambdaPermissionEventsRuleSchedule1": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "FunctionName": {
-          "Ref": "LiveAlias"
-        },
-        "Action": "lambda:InvokeFunction",
-        "Principal": {
-          "Fn::Join": [
-            "",
-            [
-              "events.",
-              {
-                "Ref": "AWS::URLSuffix"
-              }
+        "UserPoolName": "users",
+        "LambdaConfig": {
+          "PreSignUp": {
+            "Fn::GetAtt": [
+              "HelloLambdaFunction",
+              "Arn"
             ]
-          ]
-        },
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "HelloLambdaEventsRuleSchedule1",
-            "Arn"
-          ]
-        }
-      }
-    },
-    "HelloFooAlarm": {
-      "Type": "AWS::CloudWatch::Alarm",
-      "Properties": {
-        "Namespace": "AWS/Lambda",
-        "MetricName": "Errors",
-        "Threshold": 1,
-        "Period": 60,
-        "EvaluationPeriods": 1,
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "OKActions": [],
-        "AlarmActions": [],
-        "InsufficientDataActions": [],
-        "Dimensions": [
-          {
-            "Name": "FunctionName",
-            "Value": {
-              "Ref": "HelloLambdaFunction"
-            }
+          },
+          "CustomMessage": {
+            "Fn::GetAtt": [
+              "Hello2LambdaFunction",
+              "Arn"
+            ]
+          },
+          "PostAuthentication": {
+            "Fn::GetAtt": [
+              "Hello3LambdaFunction",
+              "Arn"
+            ]
           }
-        ],
-        "TreatMissingData": "missing",
-        "Statistic": "Minimum"
-      }
-    },
-    "BluegreendeploymentstestdevDeploymentApplication": {
-      "Type": "AWS::CodeDeploy::Application",
-      "Properties": {
-        "ComputePlatform": "Lambda"
-      }
-    },
-    "CodeDeployServiceRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda",
-          "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
-        ],
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Action": [
-                "sts:AssumeRole"
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "codedeploy.amazonaws.com"
-                ]
-              }
-            }
-          ]
         }
       }
     },
-    "HelloLambdaFunctionDeploymentGroup": {
-      "Type": "AWS::CodeDeploy::DeploymentGroup",
+    "CognitoUserPoolUsers1": {
+      "Type": "AWS::Cognito::UserPool",
       "Properties": {
-        "ApplicationName": {
-          "Ref": "BluegreendeploymentstestdevDeploymentApplication"
-        },
-        "AutoRollbackConfiguration": {
-          "Enabled": true,
-          "Events": [
-            "DEPLOYMENT_FAILURE",
-            "DEPLOYMENT_STOP_ON_ALARM",
-            "DEPLOYMENT_STOP_ON_REQUEST"
-          ]
-        },
-        "ServiceRoleArn": {
-          "Fn::GetAtt": [
-            "CodeDeployServiceRole",
-            "Arn"
-          ]
-        },
-        "DeploymentConfigName": {
-          "Fn::Sub": [
-            "CodeDeployDefault.Lambda${ConfigName}",
-            {
-              "ConfigName": "Linear10PercentEvery1Minute"
-            }
-          ]
-        },
-        "DeploymentStyle": {
-          "DeploymentType": "BLUE_GREEN",
-          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
-        },
-        "AlarmConfiguration": {
-          "Alarms": [
-            {
-              "Name": {
-                "Ref": "HelloFooAlarm"
-              }
-            }
-          ],
-          "Enabled": true
-        }
-      }
-    },
-    "LiveAlias": {
-      "Type": "AWS::Lambda::Alias",
-      "Properties": {
-        "FunctionVersion": {
-          "Fn::GetAtt": [
-            "HelloLambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8",
-            "Version"
-          ]
-        },
-        "FunctionName": {
-          "Ref": "HelloLambdaFunction"
-        },
-        "Name": "Live"
-      },
-      "UpdatePolicy": {
-        "CodeDeployLambdaAliasUpdate": {
-          "ApplicationName": {
-            "Ref": "BluegreendeploymentstestdevDeploymentApplication"
+        "UserPoolName": "users1",
+        "LambdaConfig": {
+          "PreSignUp": {
+            "Fn::GetAtt": [
+              "HelloLambdaFunction",
+              "Arn"
+            ]
           },
-          "AfterAllowTrafficHook": {
-            "Ref": "PostHookLambdaFunction"
+          "CustomMessage": {
+            "Fn::GetAtt": [
+              "Hello2LambdaFunction",
+              "Arn"
+            ]
           },
-          "BeforeAllowTrafficHook": {
-            "Ref": "PreHookLambdaFunction"
-          },
-          "DeploymentGroupName": {
-            "Ref": "HelloLambdaFunctionDeploymentGroup"
+          "PostAuthentication": {
+            "Fn::GetAtt": [
+              "Hello3LambdaFunction",
+              "Arn"
+            ]
           }
         }
       }
@@ -409,18 +294,6 @@
       "Description": "Current Lambda function version",
       "Value": {
         "Ref": "HelloLambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8"
-      }
-    },
-    "PreHookLambdaFunctionQualifiedArn": {
-      "Description": "Current Lambda function version",
-      "Value": {
-        "Ref": "PreHookLambdaVersionIYyrXlfQM5jjU68REvnAzRxhgq9eoLqSsDjy0"
-      }
-    },
-    "PostHookLambdaFunctionQualifiedArn": {
-      "Description": "Current Lambda function version",
-      "Value": {
-        "Ref": "PostHookLambdaVersiondh0VUUAh9BrmvORqx3vDEIcHxolKWKCO1YL45mVTbg"
       }
     }
   }

@@ -1,0 +1,491 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "BluegreendeploymentstestdevDeploymentApplication": {
+      "Type": "AWS::CodeDeploy::Application",
+      "Properties": {
+        "ComputePlatform": "Lambda"
+      }
+    },
+    "CodeDeployServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda",
+          "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
+        ],
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codedeploy.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "HelloLambdaFunctionDeploymentGroup": {
+      "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "BluegreendeploymentstestdevDeploymentApplication"
+        },
+        "AutoRollbackConfiguration": {
+          "Enabled": true,
+          "Events": [
+            "DEPLOYMENT_FAILURE",
+            "DEPLOYMENT_STOP_ON_ALARM",
+            "DEPLOYMENT_STOP_ON_REQUEST"
+          ]
+        },
+        "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "CodeDeployServiceRole",
+            "Arn"
+          ]
+        },
+        "DeploymentConfigName": {
+          "Fn::Sub": [
+            "CodeDeployDefault.Lambda${ConfigName}",
+            {
+              "ConfigName": "Linear10PercentEvery1Minute"
+            }
+          ]
+        },
+        "DeploymentStyle": {
+          "DeploymentType": "BLUE_GREEN",
+          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
+        }
+      }
+    },
+    "Hello2LambdaFunctionDeploymentGroup": {
+      "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "BluegreendeploymentstestdevDeploymentApplication"
+        },
+        "AutoRollbackConfiguration": {
+          "Enabled": true,
+          "Events": [
+            "DEPLOYMENT_FAILURE",
+            "DEPLOYMENT_STOP_ON_ALARM",
+            "DEPLOYMENT_STOP_ON_REQUEST"
+          ]
+        },
+        "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "CodeDeployServiceRole",
+            "Arn"
+          ]
+        },
+        "DeploymentConfigName": {
+          "Fn::Sub": [
+            "CodeDeployDefault.Lambda${ConfigName}",
+            {
+              "ConfigName": "Linear10PercentEvery1Minute"
+            }
+          ]
+        },
+        "DeploymentStyle": {
+          "DeploymentType": "BLUE_GREEN",
+          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
+        }
+      }
+    },
+    "Hello3LambdaFunctionDeploymentGroup": {
+      "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "BluegreendeploymentstestdevDeploymentApplication"
+        },
+        "AutoRollbackConfiguration": {
+          "Enabled": true,
+          "Events": [
+            "DEPLOYMENT_FAILURE",
+            "DEPLOYMENT_STOP_ON_ALARM",
+            "DEPLOYMENT_STOP_ON_REQUEST"
+          ]
+        },
+        "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "CodeDeployServiceRole",
+            "Arn"
+          ]
+        },
+        "DeploymentConfigName": {
+          "Fn::Sub": [
+            "CodeDeployDefault.Lambda${ConfigName}",
+            {
+              "ConfigName": "Linear10PercentEvery1Minute"
+            }
+          ]
+        },
+        "DeploymentStyle": {
+          "DeploymentType": "BLUE_GREEN",
+          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
+        }
+      }
+    },
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket"
+    },
+    "HelloLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/canary-deployments-test-dev-hello"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "canary-deployments-test",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/canary-deployments-test-dev-hello:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/canary-deployments-test-dev-preHook:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/canary-deployments-test-dev-postHook:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/canary-deployments-test-dev-hello:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/canary-deployments-test-dev-preHook:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/canary-deployments-test-dev-postHook:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "codedeploy:*"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetRecords",
+                    "dynamodb:GetShardIterator",
+                    "dynamodb:DescribeStream",
+                    "dynamodb:ListStreams"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "StreamsTestTable",
+                        "StreamArn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "canary-deployments-test",
+              "dev",
+              "us-east-1",
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
+    "HelloLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/blue-green-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
+        },
+        "FunctionName": "blue-green-deployments-test-dev-hello",
+        "Handler": "handler.hello",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs6.10",
+        "Timeout": 6
+      },
+      "DependsOn": [
+        "HelloLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "HelloLambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "HelloLambdaFunction"
+        },
+        "CodeSha256": "sZvdDgxnAbKe1yaQga0XJPD82+o5jFWz+J3lR+q9UHU="
+      }
+    },
+    "Hello2LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/blue-green-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
+        },
+        "FunctionName": "canary-deployments-test-dev-hello",
+        "Handler": "handler.hello",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs6.10",
+        "Timeout": 6
+      },
+      "DependsOn": [
+        "HelloLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "Hello2LambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "Hello2LambdaFunction"
+        },
+        "CodeSha256": "sZvdDgxnAbKe1yaQga0XJPD82+o5jFWz+J3lR+q9UHU="
+      }
+    },
+    "Hello3LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/blue-green-deployments-test/dev/1520191533287-2018-03-04T19:25:33.287Z/canary-deployments-test.zip"
+        },
+        "FunctionName": "blue-green-deployments-test-dev-hello",
+        "Handler": "handler.hello",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs6.10",
+        "Timeout": 6
+      },
+      "DependsOn": [
+        "HelloLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "Hello3LambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "Hello3LambdaFunction"
+        },
+        "CodeSha256": "sZvdDgxnAbKe1yaQga0XJPD82+o5jFWz+J3lR+q9UHU="
+      }
+    },
+    "Live1Alias": {
+      "Type": "AWS::Lambda::Alias",
+      "Properties": {
+        "FunctionVersion": {
+          "Fn::GetAtt": [
+            "HelloLambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8",
+            "Version"
+          ]
+        },
+        "FunctionName": {
+          "Ref": "HelloLambdaFunction"
+        },
+        "Name": "Live1"
+      },
+      "UpdatePolicy": {
+        "CodeDeployLambdaAliasUpdate": {
+          "ApplicationName": {
+            "Ref": "BluegreendeploymentstestdevDeploymentApplication"
+          },
+          "DeploymentGroupName": {
+            "Ref": "HelloLambdaFunctionDeploymentGroup"
+          }
+        }
+      }
+    },
+    "Live2Alias": {
+      "Type": "AWS::Lambda::Alias",
+      "Properties": {
+        "FunctionVersion": {
+          "Fn::GetAtt": [
+            "Hello2LambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8",
+            "Version"
+          ]
+        },
+        "FunctionName": {
+          "Ref": "Hello2LambdaFunction"
+        },
+        "Name": "Live2"
+      },
+      "UpdatePolicy": {
+        "CodeDeployLambdaAliasUpdate": {
+          "ApplicationName": {
+            "Ref": "BluegreendeploymentstestdevDeploymentApplication"
+          },
+          "DeploymentGroupName": {
+            "Ref": "Hello2LambdaFunctionDeploymentGroup"
+          }
+        }
+      }
+    },
+    "Live3Alias": {
+      "Type": "AWS::Lambda::Alias",
+      "Properties": {
+        "FunctionVersion": {
+          "Fn::GetAtt": [
+            "Hello3LambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8",
+            "Version"
+          ]
+        },
+        "FunctionName": {
+          "Ref": "Hello3LambdaFunction"
+        },
+        "Name": "Live3"
+      },
+      "UpdatePolicy": {
+        "CodeDeployLambdaAliasUpdate": {
+          "ApplicationName": {
+            "Ref": "BluegreendeploymentstestdevDeploymentApplication"
+          },
+          "DeploymentGroupName": {
+            "Ref": "Hello3LambdaFunctionDeploymentGroup"
+          }
+        }
+      }
+    },
+    "CognitoUserPoolUsers": {
+      "Type": "AWS::Cognito::UserPool",
+      "Properties": {
+        "UserPoolName": "users",
+        "LambdaConfig": {
+          "PreSignUp": {
+            "Ref": "Live1Alias"
+          },
+          "CustomMessage": {
+            "Ref": "Live2Alias"
+          },
+          "PostAuthentication": {
+            "Ref": "Live3Alias"
+          }
+        }
+      }
+    },
+    "CognitoUserPoolUsers1": {
+      "Type": "AWS::Cognito::UserPool",
+      "Properties": {
+        "UserPoolName": "users1",
+        "LambdaConfig": {
+          "PreSignUp": {
+            "Ref": "Live1Alias"
+          },
+          "CustomMessage": {
+            "Ref": "Live2Alias"
+          },
+          "PostAuthentication": {
+            "Ref": "Live3Alias"
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      }
+    },
+    "HelloLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "HelloLambdaVersionFYAirphUvjV7H12yGxU1eQrqAiSBMjAi9hdLPgV62L8"
+      }
+    }
+  }
+}
+
