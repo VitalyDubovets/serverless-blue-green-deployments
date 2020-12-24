@@ -11,7 +11,7 @@ provider:
         - "*"
 plugins:
   - serverless-plugin-aws-alerts
-  - serverless-plugin-canary-deployments
+  - serverless-blue-green-deployments
 
 custom:
   alerts:
@@ -30,6 +30,7 @@ functions:
   hello:
     handler: handler.hello
     events:
+      -
       - websocket:
           route: $default
           authorizer: authorize

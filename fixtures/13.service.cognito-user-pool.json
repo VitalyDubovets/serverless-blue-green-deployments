@@ -1,0 +1,75 @@
+{
+  "service": "blue-green-deployments-test",
+  "custom": {
+    "deploymentSettings": {
+      "stages": [
+        "dev"
+      ]
+    }
+  },
+  "functions": {
+    "hello": {
+      "handler": "handler.hello",
+      "events": [
+        {
+          "cognitoUserPool": {
+            "pool": "Users",
+            "trigger": "PreSignUp"
+          }
+        },
+        {
+          "cognitoUserPool": {
+            "pool": "Users1",
+            "trigger": "PreSignUp"
+          }
+        }
+      ],
+      "deploymentSettings": {
+        "type": "Linear10PercentEvery1Minute",
+        "alias": "Live1"
+      }
+    },
+    "hello2": {
+      "handler": "handler.hello",
+      "events": [
+        {
+          "cognitoUserPool": {
+            "pool": "Users",
+            "trigger": "CustomMessage"
+          }
+        },
+        {
+          "cognitoUserPool": {
+            "pool": "Users1",
+            "trigger": "CustomMessage"
+          }
+        }
+      ],
+      "deploymentSettings": {
+        "type": "Linear10PercentEvery1Minute",
+        "alias": "Live2"
+      }
+    },
+    "hello3": {
+      "handler": "handler.hello",
+      "events": [
+        {
+          "cognitoUserPool": {
+            "pool": "Users",
+            "trigger": "PostAuthentication"
+          }
+        },
+        {
+          "cognitoUserPool": {
+            "pool": "Users1",
+            "trigger": "PostAuthentication"
+          }
+        }
+      ],
+      "deploymentSettings": {
+        "type": "Linear10PercentEvery1Minute",
+        "alias": "Live3"
+      }
+    }
+  }
+}

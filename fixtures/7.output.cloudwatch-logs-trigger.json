@@ -285,7 +285,7 @@
         }
       }
     },
-    "CanarydeploymentstestdevDeploymentApplication": {
+    "BluegreendeploymentstestdevDeploymentApplication": {
       "Type": "AWS::CodeDeploy::Application",
       "Properties": {
         "ComputePlatform": "Lambda"
@@ -320,7 +320,7 @@
       "Type": "AWS::CodeDeploy::DeploymentGroup",
       "Properties": {
         "ApplicationName": {
-          "Ref": "CanarydeploymentstestdevDeploymentApplication"
+          "Ref": "BluegreendeploymentstestdevDeploymentApplication"
         },
         "AutoRollbackConfiguration": {
           "Enabled": true,
@@ -377,7 +377,7 @@
       "UpdatePolicy": {
         "CodeDeployLambdaAliasUpdate": {
           "ApplicationName": {
-            "Ref": "CanarydeploymentstestdevDeploymentApplication"
+            "Ref": "BluegreendeploymentstestdevDeploymentApplication"
           },
           "AfterAllowTrafficHook": {
             "Ref": "PostHookLambdaFunction"
