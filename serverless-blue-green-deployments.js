@@ -241,7 +241,11 @@ class ServerlessBlueGreenDeployments {
       _.pickBy(isApiGatewayAuthorizer),
       _.pickBy(isAuthorizerForFunction)
     )
-    return getAuthorizersForFunction(this.compiledTpl.Resources)
+    try {
+      return getAuthorizersForFunction(this.compiledTpl.Resources)
+    } catch (e) {
+      return null
+    }
   }
 
   getEventSourceMappingsFor (functionName) {
